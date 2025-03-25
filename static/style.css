@@ -1,0 +1,162 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: url("s.jpg") no-repeat center center fixed;
+    background-size: cover;
+    color: white;
+}
+
+.container {
+    max-width: 400px;
+    margin: 50px auto;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.3);
+}
+
+.file-input-wrapper {
+    display: inline-block;
+    position: relative;
+    width: auto;
+}
+
+#file {
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.file-label {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 12px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: 1px solid white;
+    border-radius: 3px;
+    cursor: pointer;
+    min-width: 100px;
+}
+
+.file-label:hover {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+#selectedFile {
+    margin-top: 5px;
+    font-size: 12px;
+    color: green;
+}
+
+.input-box {
+    width: 50%;
+    padding: 5px;
+    font-size: 12px;
+    background: rgba(0, 0, 0, 0.5);
+    color: green;
+    border: 1px solid white;
+    border-radius: 3px;
+    text-align: center;
+    box-sizing: border-box;
+    outline: none;
+}
+
+button {
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: 1px solid white;
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 5px;
+}
+
+button:hover {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 10px 0;
+}
+
+.file-box {
+    padding: 3px 7px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid white;
+    border-radius: 3px;
+    color: white;
+    flex: 1;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 300px;
+    text-decoration: underline;
+}
+
+.download-btn, .delete-btn {
+    margin-left: 10px;
+}
+
+.download-btn {
+    background: rgba(0, 255, 0, 0.2);
+    color: white;
+    border: 0.5px solid yellow;
+    padding: 3px 6px;
+    font-size: 11px;
+    border-radius: 3px;
+}
+
+.download-btn:hover {
+    background: rgba(0, 255, 0, 0.5);
+}
+
+.delete-btn {
+    background: rgba(255, 0, 0, 0.2);
+    color: white;
+    border: 0.5px solid yellow;
+    padding: 3px 6px;
+    font-size: 11px;
+    border-radius: 3px;
+    text-decoration: underline;
+}
+
+.delete-btn:hover {
+    background: rgba(255, 0, 0, 0.5);
+}
+.red-text {
+    color: green;
+    font-style: italic;
+    cursor: pointer;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 20px;
+    text-decoration: underline;
+}
+.terms-container p strong {
+    font-weight: bold !important;
+}
+.terms-container {
+    background: rgba(255, 255, 255, 0.3);
+    color: black;
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 1.0em;
+    width: 80%;
+    max-width: 600px;
+    margin: 20px auto;
+    display: none;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+}
+.hidden {
+    display: none;
+}

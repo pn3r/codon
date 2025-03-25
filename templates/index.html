@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share By Me</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='i.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Share By Me</h1>
+
+        <!-- Upload Form -->
+        <form id="uploadForm" enctype="multipart/form-data">
+            <div class="file-input-wrapper">
+                <label for="file" class="file-label">Choose File</label>
+                <input type="file" name="files" id="file" multiple>
+            </div>
+            <p id="selectedFile">No file chosen</p>
+            <button type="submit">Upload</button>
+        </form>
+
+        <!-- Password Display Section -->
+        <div id="passwordDisplay" class="hidden">
+            <div>Files access key:</div>
+            <span id="passwordText"></span>
+            <button id="copyBtn" onclick="copyPassword()">Copy</button>
+        </div>
+
+        <!-- Password Input -->
+        <input type="password" id="passwordInput" class="input-box" placeholder="Enter access key?">
+        <button id="togglePassword" onclick="togglePasswordVisibility()">👁</button>
+        <button id="verifyBtn" onclick="verifyPassword()">Enter</button>
+
+        <!-- File Section -->
+        <div id="fileSection" class="hidden">
+            <h2>Files</h2>
+            <ul id="fileList"></ul>
+        </div>
+
+        <!-- Terms Section -->
+        <p class="red-text" onclick="toggleTerms()">Terms of use!</p>
+
+        <div class="terms-container" id="termsContent">
+            <p><strong>1. Introduction</strong></p>
+            <p>Welcome to <strong>[Share by Me]</strong>, a cloud-based file-sharing platform designed for quick and temporary transfers. By using this service, you agree to the following terms and conditions.</p>
+
+            <p><strong>2. Acceptable Use</strong></p>
+            <p>You can share any type of file, except copyrighted or illegal content.</p>
+            <p>The maximum acceptable file size for each file is **1.95GB**.</p>
+            <p>Upon uploading a file, you will receive a unique access key to retrieve or delete your file.</p>
+            <p>You are responsible for sharing the access key with intended recipients.</p>
+
+            <p><strong>3. Data Privacy & Security</strong></p>
+            <p>This platform is not designed for storing sensitive or confidential data.</p>
+            <p>While we strive for security, we do not guarantee data protection.</p>
+            <p>In the event of data breaches, the platform owner holds no responsibility for any loss or unauthorized access.</p>
+
+            <p><strong>4. Disclaimer of Liability</strong></p>
+            <p>Use this platform at your own risk.</p>
+            <p>We do not provide warranties regarding data integrity, availability, or security.</p>
+            <p>Any misuse, including sharing restricted content, may result in a ban.</p>
+
+            <p><strong>5. Final Note</strong></p>
+            <p>This platform is meant for casual and fun use. Please respect the guidelines and enjoy effortless file sharing!</p>
+
+            <p>Thank you for using <strong>[Share by Me]</strong>!</p>
+        </div>
+    </div>
+
+    <script>
+        function toggleTerms() {
+            var termsContent = document.getElementById("termsContent");
+            termsContent.style.display = termsContent.style.display === "none" || termsContent.style.display === "" ? "block" : "none";
+        }
+    </script>
+
+    <script>
+        document.getElementById('file').addEventListener('change', function () {
+            const fileNames = [...this.files].map(file => file.name).join(", ") || "No file chosen";
+            document.getElementById('selectedFile').textContent = fileNames;
+        });
+
+        async function uploadFiles(event) {
+            event.preventDefault();
+            const fileInput = document.getElementById('file');
+
+            if (fileInput.files.length === 0) return;
+
+            const formData = new FormData();
+            for (const file of fileInput.files) {
+                formData.append("files", file);
+            }
+
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            if (data.status === 'success') {
+                document.getElementById('passwordDisplay').classList.remove('hidden');
+                document.getElementById('passwordText').textContent = data.password;
+            }
+        }
+
+        async function verifyPassword() {
+            const password = document.getElementById('passwordInput').value;
+            const response = await fetch('/verify_password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password })
+            });
+
+            const data = await response.json();
+            const fileSection = document.getElementById('fileSection');
+            const fileList = document.getElementById('fileList');
+
+            if (data.status === 'success') {
+                fileSection.classList.remove('hidden');
+                fileList.innerHTML = '';
+
+                if (!data.files || Object.keys(data.files).length === 0) {
+                    fileList.innerHTML = "<p>No files found.</p>";
+                } else {
+                    Object.keys(data.files).forEach(file => {
+                        const listItem = document.createElement("li");
+                        listItem.classList.add("file-item");
+                        listItem.innerHTML = `
+                            <div class="file-box">${file}</div>
+                            <a href="/download/${file}" class="download-btn">Download</a>
+                            <button class="delete-btn" onclick="deleteFile('${file}')">Delete</button>
+                        `;
+                        fileList.appendChild(listItem);
+                    });
+                }
+            } else {
+                fileSection.classList.add('hidden');
+            }
+        }
+
+        async function deleteFile(filename) {
+            const password = document.getElementById('passwordInput').value;
+            const response = await fetch(`/delete/${filename}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password })
+            });
+
+            const data = await response.json();
+            if (data.status === 'success') {
+                verifyPassword();
+            }
+        }
+
+        function copyPassword() {
+            navigator.clipboard.writeText(document.getElementById('passwordText').textContent).then(() => {
+                document.getElementById('passwordDisplay').classList.add('hidden');
+            });
+        }
+
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('passwordInput');
+            const toggleBtn = document.getElementById('togglePassword');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleBtn.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleBtn.textContent = '👁';
+            }
+        }
+
+        document.getElementById('uploadForm').addEventListener('submit', uploadFiles);
+    </script>
+</body>
+</html>
